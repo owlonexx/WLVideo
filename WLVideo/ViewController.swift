@@ -18,7 +18,6 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
     }
 
-
     @IBAction func buttonClick(_ sender: Any) {
         present(WLCameraController(), animated: true, completion: nil)
     }

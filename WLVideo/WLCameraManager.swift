@@ -243,6 +243,7 @@ class WLCameraManager: NSObject {
         self.isFocusing = true
         self.focusImageView.center = point
         self.focusImageView.isHidden = false
+        self.focusImageView.alpha = 1
         self.focusImageView.transform = CGAffineTransform.init(scaleX: 1.4, y: 1.4)
         
         lockForConfiguration { [weak self] (devide) in
@@ -269,24 +270,22 @@ class WLCameraManager: NSObject {
     }
     
     func showFocusImageAnimation() {
+        let animation = CABasicAnimation.init(keyPath: "opacity")
+        animation.fromValue = NSNumber.init(value: 1.0)
+        animation.toValue = NSNumber.init(value: 0.1)
+        animation.autoreverses = true
+        animation.duration = 0.3
+        animation.repeatCount = 2
+        animation.isRemovedOnCompletion = true
+        animation.fillMode = .forwards
+        animation.delegate = self
+        focusImageView.layer.add(animation, forKey: nil)
+        
         UIView.animate(withDuration: 0.2) { [weak self] in
             guard let self = self else { return }
             self.focusImageView.transform = CGAffineTransform.init(scaleX: 1, y: 1)
         }
-        for i in 1...5 {
-            UIView.animate(withDuration: 0.1, delay: 0.2 * Double(i), animations: { [weak self] in
-                guard let self = self else { return }
-                self.focusImageView.alpha = CGFloat(i % 2)
-            })
-        }
-        UIView.animate(withDuration: 0.2, delay: 1, animations: {
-            self.focusImageView.alpha = 0
-        }){ [weak self] _ in
-            guard let self = self else { return }
-            self.isFocusing = false
-            self.focusImageView.isHidden = true
-        }
-        
+
     }
     
     func repareForZoom() {
@@ -304,12 +303,13 @@ class WLCameraManager: NSObject {
     
     // 切换摄像头
     func changeCamera() {
+        if isRecording { return }
         let currentPosition = videoInput.device.position
         var toChangePosition = AVCaptureDevice.Position.front
         if currentPosition == .unspecified || currentPosition == .front {
             toChangePosition = .back
         }
-        
+
         guard let toChangeDevice = getCameraDevice(toChangePosition),
             let toChangeDeviceInput = try? AVCaptureDeviceInput.init(device: toChangeDevice) else {
                 error("切换摄像头失败")
@@ -400,6 +400,20 @@ extension WLCameraManager: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptu
                     assetWriterAudioInput.append(sampleBuffer)
                 }
             }
+        }
+    }
+    
+}
+
+extension WLCameraManager: CAAnimationDelegate {
+    
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.focusImageView.alpha = 0
+        }) { [weak self] _ in
+            guard let self = self else { return }
+            self.isFocusing = false
+            self.focusImageView.isHidden = true
         }
     }
     
