@@ -73,11 +73,13 @@ class WLVideoEditor: NSObject {
     }
     
     func addAudio() {
+        composition.tracks(withMediaType: .audio).forEach { (track) in
+            composition.removeTrack(track)
+        }
+        
         let url = URL.init(fileURLWithPath: Bundle.main.path(forResource: "五环之歌", ofType: "mp3")!)
         let audioAsset = AVAsset.init(url: url)
         let avAssetAudioTrack = audioAsset.tracks(withMediaType: .audio).first
-        
-        composition.removeTrack(composition.tracks(withMediaType: .audio).first!)
         
         audioTrack = composition.addMutableTrack(withMediaType: .audio,
                                                  preferredTrackID: kCMPersistentTrackID_Invalid)
