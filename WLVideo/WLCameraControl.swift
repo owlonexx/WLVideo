@@ -13,29 +13,29 @@ enum LongPressState {
     case end
 }
 
+protocol WLCameraControlDelegate: class {
+    func cameraControlDidTakePhoto()
+    func cameraControlBeginTakeVideo()
+    func cameraControlEndTakeVideo()
+    func cameraControlDidChangeFocus(focus: Double)
+    func cameraControlDidChangeCamera()
+    func cameraControlDidClickBack()
+    func cameraControlDidExit()
+    func cameraControlDidComplete()
+}
 
 class WLCameraControl: UIView {
     
-    typealias TapBlock = () -> ()
-    typealias LongPressBlock = (LongPressState) -> ()
-    
-    var tapBlock: TapBlock = {}
-    var longPressBlock: LongPressBlock = {_ in }
-    var longPressChangeBlock: (Double) -> () = {_ in }
-    var retakeBlock: () -> () = {}
-    var changeCameraBlock: () -> () = {}
-    var dismissBlock: () -> () = {}
+    weak open var delegate: WLCameraControlDelegate?
     
     let videoLength: Double = WLVideoConfig.videoLength
     var recordTime: Double = 0
     
-    let cameraButton = UIView()
+    let cameraButton = UIVisualEffectView(effect: UIBlurEffect.init(style: .extraLight))
     let centerView = UIView()
     let progressLayer = CAShapeLayer()
-    
     let retakeButton = UIButton()
     let takeButton = UIButton()
-    
     let exitButton = UIButton()
     let changeCameraButton = UIButton()
     
@@ -71,15 +71,16 @@ class WLCameraControl: UIView {
     
     func setupCameraButton() {
         cameraButton.frame = CGRect(x: 0, y: 0, width: WLVideoConfig.cameraButtonWidth, height: WLVideoConfig.cameraButtonWidth)
+        cameraButton.alpha = 1.0
         cameraButton.center = CGPoint(x: self.width * 0.5, y: self.height * 0.5)
-        cameraButton.backgroundColor = #colorLiteral(red: 0.8823529412, green: 0.8823529412, blue: 0.8823529412, alpha: 1)
         cameraButton.layer.cornerRadius = cameraButton.width * 0.5
+        cameraButton.layer.masksToBounds = true
         self.addSubview(cameraButton)
         
         centerView.frame = CGRect(x: 10, y: 10, width: cameraButton.width - 20, height: cameraButton.height - 20)
         centerView.layer.cornerRadius = centerView.width * 0.5
         centerView.backgroundColor = .white
-        cameraButton.addSubview(centerView)
+        cameraButton.contentView.addSubview(centerView)
         
         let center = cameraButton.width * 0.5
         let radius = center - 2.5
@@ -110,11 +111,12 @@ class WLCameraControl: UIView {
         case .began:
             longPressBegin()
         case .changed:
-            let point = res.location(in: self.cameraButton)
-            if point.y <= 0 {
-                self.longPressChangeBlock(Double(abs(point.y)))
-            } else if point.y <= 10 {
-                self.longPressChangeBlock(0)
+            let pointY = res.location(in: self.cameraButton).y
+            guard let delegate = delegate else { return }
+            if pointY <= 0 {
+                delegate.cameraControlDidChangeFocus(focus: Double(abs(pointY)))
+            } else if pointY <= 10 {
+                delegate.cameraControlDidChangeFocus(focus: 0)
             }
         default:
             longPressEnd()
@@ -122,15 +124,19 @@ class WLCameraControl: UIView {
     }
     
     @objc func tapGesture() {
-        self.tapBlock()
+        guard let delegate = delegate else { return }
+        delegate.cameraControlDidTakePhoto()
         cameraButton.isHidden = true
         changeCameraButton.isHidden = true
         exitButton.isHidden = true
     }
     
     func longPressBegin() {
-        timer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(timeRecord), userInfo: nil, repeats: true)
-        self.longPressBlock(.begin)
+        guard let delegate = delegate else { return }
+        delegate.cameraControlBeginTakeVideo()
+        
+        timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(timeRecord), userInfo: nil, repeats: true)
+        
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
             guard let `self` = self else { return }
             self.cameraButton.transform = CGAffineTransform.init(scaleX: 1.5, y: 1.5)
@@ -144,13 +150,14 @@ class WLCameraControl: UIView {
         self.timer = nil
         
         cameraButton.isHidden = true
-        cameraButton.transform = CGAffineTransform.identity
-        centerView.transform = CGAffineTransform.identity
         changeCameraButton.isHidden = true
         exitButton.isHidden = true
+        cameraButton.transform = CGAffineTransform.identity
+        centerView.transform = CGAffineTransform.identity
         progressLayer.strokeEnd = 0
         
-        self.longPressBlock(.end)
+        guard let delegate = delegate else { return }
+        delegate.cameraControlEndTakeVideo()
     }
     
     func showCompleteAnimation() {
@@ -170,25 +177,29 @@ class WLCameraControl: UIView {
         takeButton.isHidden = true
         retakeButton.frame = cameraButton.frame
         takeButton.frame = cameraButton.frame
-        
         recordTime = 0
-        retakeBlock()
+        
+        guard let delegate = delegate else { return }
+        delegate.cameraControlDidClickBack()
     }
     
     @objc func exitButtonClick() {
-        self.dismissBlock()
+        guard let delegate = delegate else { return }
+        delegate.cameraControlDidExit()
     }
     
     @objc func takeButtonClick() {
-        
+        guard let delegate = delegate else { return }
+        delegate.cameraControlDidComplete()
     }
     
     @objc func changeCameraButtonClick() {
-        self.changeCameraBlock()
+        guard let delegate = delegate else { return }
+        delegate.cameraControlDidChangeCamera()
     }
     
     @objc func timeRecord() {
-        recordTime += 0.05
+        recordTime += 0.01
         setProgress(recordTime / videoLength)
     }
     
@@ -198,7 +209,6 @@ class WLCameraControl: UIView {
             return
         }
         progressLayer.strokeEnd = CGFloat(p)
-        progressLayer.removeAllAnimations()
     }
     
     required init?(coder aDecoder: NSCoder) {

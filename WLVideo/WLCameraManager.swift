@@ -60,13 +60,16 @@ class WLCameraManager: NSObject {
         
         // 开启手机方向监听
         orientation.startUpdates { [weak self] (orientation) in
-            guard let self = self else { return }
+            guard let `self` = self else { return }
             self.currentOrientation = orientation
         }
     }
     
     func staruRunning() {
-        session.startRunning()
+        DispatchQueue.global(qos: .default)
+            .async {
+                self.session.startRunning()
+        }
     }
     
     // 初始化相机
@@ -138,7 +141,7 @@ class WLCameraManager: NSObject {
     func initializeVideoWriter() {
         let width = WLVideoConfig.videoWidth
         let height = WLVideoConfig.videoHeight
-        let rotate = self.videoRotateWith(self.currentOrientation)
+        let rotate = videoRotateWith(self.currentOrientation)
         
         guard let writer = try? AVAssetWriter.init(outputURL: URL.init(fileURLWithPath: currentUrl), fileType: AVFileType.mp4) else {
             error("无法写入视频")
@@ -250,23 +253,23 @@ class WLCameraManager: NSObject {
             guard let self = self else { return }
             let cameraPoint = self.previewLayer.captureDevicePointConverted(fromLayerPoint: point)
             
-            if devide.isFocusModeSupported(.continuousAutoFocus) {
-                devide.focusMode = .continuousAutoFocus
-            }
             if devide.isFocusPointOfInterestSupported {
                 devide.focusPointOfInterest = cameraPoint
             }
-            
-            if devide.isExposureModeSupported(.continuousAutoExposure) {
-                devide.exposureMode = .continuousAutoExposure
+            if devide.isFocusModeSupported(.continuousAutoFocus) {
+                devide.focusMode = .continuousAutoFocus
             }
+            
             if devide.isExposurePointOfInterestSupported {
                 devide.exposurePointOfInterest = cameraPoint
             }
+            if devide.isExposureModeSupported(.continuousAutoExposure) {
+                devide.exposureMode = .continuousAutoExposure
+            }
+            
         }
         
         showFocusImageAnimation()
-        
     }
     
     func showFocusImageAnimation() {
@@ -297,7 +300,7 @@ class WLCameraManager: NSObject {
         let toZoomFactory = max(1, Double(videoCurrentZoom) * mulriple)
         let finalZoomFactory = min(toZoomFactory, Double(videoMaxZoomFactor))
         lockForConfiguration { (device) in
-            device.ramp(toVideoZoomFactor: CGFloat(finalZoomFactory), withRate: 10.0)
+            device.videoZoomFactor = CGFloat(finalZoomFactory)
         }
     }
     

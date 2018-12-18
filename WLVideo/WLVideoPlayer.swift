@@ -31,6 +31,7 @@ class WLVideoPlayer: UIView {
     func play() {
         playerLayer?.removeFromSuperlayer()
         let item = AVPlayerItem.init(asset: AVURLAsset.init(url: videoUrl!))
+        
         player = AVPlayer.init(playerItem: item)
         playerLayer = AVPlayerLayer.init(player: player)
         playerLayer?.frame = layer.bounds
