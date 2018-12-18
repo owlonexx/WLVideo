@@ -31,7 +31,7 @@ class ViewController: UIViewController, UITableViewDelegate {
 //        playerLayer.videoGravity = .resizeAspect
 //        self.view.layer.addSublayer(playerLayer)
 //        player.play()
-
+ 
         
         let vc = WLCameraController()
         vc.completeBlock = { url, type in
