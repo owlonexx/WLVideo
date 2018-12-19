@@ -1,5 +1,6 @@
 ## WLVideo
 仿照微信拍照拍视频的功能
+
 ![image](https://github.com/Weang/WLVideo/blob/master/demo.gif)
 
 ## WLVideo有哪些功能？
