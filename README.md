@@ -1,11 +1,12 @@
 ## WLVideo
 仿照微信拍照拍视频的功能
-
 ![image](https://github.com/Weang/WLVideo/blob/master/demo.gif)
 
 ## WLVideo有哪些功能？
 * 图片视频拍摄
+* 点按对焦、自动曝光
 * 双指缩放和录制视频时单指缩放
+* 支持横竖屏拍摄
 * 视频文件加图片水印
 * 修改视频背景声音
 * 自定义视频导出参数
