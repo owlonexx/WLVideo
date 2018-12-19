@@ -28,7 +28,7 @@ class WLCameraControl: UIView {
     
     weak open var delegate: WLCameraControlDelegate?
     
-    let videoLength: Double = WLVideoConfig.videoLength
+    let videoLength: Double = 10
     var recordTime: Double = 0
     
     let cameraButton = UIVisualEffectView(effect: UIBlurEffect.init(style: .extraLight))
@@ -70,7 +70,7 @@ class WLCameraControl: UIView {
     }
     
     func setupCameraButton() {
-        cameraButton.frame = CGRect(x: 0, y: 0, width: WLVideoConfig.cameraButtonWidth, height: WLVideoConfig.cameraButtonWidth)
+        cameraButton.frame = CGRect(x: 0, y: 0, width: 70, height: 70)
         cameraButton.alpha = 1.0
         cameraButton.center = CGPoint(x: self.width * 0.5, y: self.height * 0.5)
         cameraButton.layer.cornerRadius = cameraButton.width * 0.5
@@ -165,7 +165,7 @@ class WLCameraControl: UIView {
         self.takeButton.isHidden = false
         UIView.animate(withDuration: 0.3, animations: {
             self.retakeButton.x = 50
-            self.takeButton.x = screenWidth - self.takeButton.width - 50
+            self.takeButton.x = self.width - self.takeButton.width - 50
         })
     }
     

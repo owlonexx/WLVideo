@@ -28,44 +28,56 @@ class WLCameraController: UIViewController {
     var controlView: WLCameraControl!
     var manager: WLCameraManager!
     
+    let cameraContentView = UIView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        manager = WLCameraManager(superView: self.view)
+        let scale: CGFloat = 16.0 / 9.0
+        let contentWidth = UIScreen.main.bounds.size.width
+        let contentHeight = min(scale * contentWidth, UIScreen.main.bounds.size.height)
+        
+        cameraContentView.backgroundColor = UIColor.black
+        cameraContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
+        cameraContentView.center = self.view.center
+        self.view.addSubview(cameraContentView)
+        
+        manager = WLCameraManager(superView: cameraContentView)
         setupView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         manager.staruRunning()
-        manager.focusAt(self.view.center)
+        manager.focusAt(cameraContentView.center)
     }
+    
     override var prefersStatusBarHidden: Bool {
         return true
     }
     
     func setupView() {
         self.view.backgroundColor = UIColor.black
-        self.view.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(focus(_:))))
-        self.view.addGestureRecognizer(UIPinchGestureRecognizer.init(target: self, action: #selector(pinch(_:))))
+        cameraContentView.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(focus(_:))))
+        cameraContentView.addGestureRecognizer(UIPinchGestureRecognizer.init(target: self, action: #selector(pinch(_:))))
         
-        videoPlayer = WLVideoPlayer(frame: self.view.bounds)
+        videoPlayer = WLVideoPlayer(frame: cameraContentView.bounds)
         videoPlayer.isHidden = true
-        self.view.addSubview(videoPlayer)
+        cameraContentView.addSubview(videoPlayer)
         
-        previewImageView.frame = self.view.bounds
+        previewImageView.frame = cameraContentView.bounds
         previewImageView.backgroundColor = UIColor.black
         previewImageView.contentMode = .scaleAspectFit
         previewImageView.isHidden = true
-        self.view.addSubview(previewImageView)
+        cameraContentView.addSubview(previewImageView)
         
-        controlView = WLCameraControl.init(frame: CGRect(x: 0, y: screenHeight - 150, width: screenWidth, height: 150))
+        controlView = WLCameraControl.init(frame: CGRect(x: 0, y: cameraContentView.height - 150, width: self.view.width, height: 150))
         controlView.delegate = self
-        view.addSubview(controlView)
+        cameraContentView.addSubview(controlView)
     }
     
     @objc func focus(_ ges: UITapGestureRecognizer) {
-        let focusPoint = ges.location(in: self.view)
+        let focusPoint = ges.location(in: cameraContentView)
         manager.focusAt(focusPoint)
     }
     
@@ -109,19 +121,17 @@ extension WLCameraController: WLCameraControlDelegate {
         manager.endRecordingVideo { [weak self] (videoUrl) in
             guard let `self` = self else { return }
             let url = URL.init(fileURLWithPath: videoUrl)
+            self.type = .video
+            self.url = videoUrl
+            self.videoPlayer.isHidden = false
             self.videoPlayer.videoUrl = url
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3, execute: {
-                self.type = .video
-                self.url = videoUrl
-                self.videoPlayer.isHidden = false
-                self.videoPlayer.play()
-                self.controlView.showCompleteAnimation()
-            })
+            self.videoPlayer.play()
+            self.controlView.showCompleteAnimation()
         }
     }
     
     func cameraControlDidChangeFocus(focus: Double) {
-        let sh = Double(screenHeight) * 0.15
+        let sh = Double(UIScreen.main.bounds.size.width) * 0.15
         let zoom = (focus / sh) + 1
         self.manager.zoom(zoom)
     }

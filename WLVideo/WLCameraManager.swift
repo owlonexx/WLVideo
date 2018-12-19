@@ -66,9 +66,8 @@ class WLCameraManager: NSObject {
     }
     
     func staruRunning() {
-        DispatchQueue.global(qos: .default)
-            .async {
-                self.session.startRunning()
+        DispatchQueue.global(qos: .default).async {
+            self.session.startRunning()
         }
     }
     
@@ -139,28 +138,29 @@ class WLCameraManager: NSObject {
     
     //每次录制视频都要初始化写入
     func initializeVideoWriter() {
-        let width = WLVideoConfig.videoWidth
-        let height = WLVideoConfig.videoHeight
         let rotate = videoRotateWith(self.currentOrientation)
         
-        guard let writer = try? AVAssetWriter.init(outputURL: URL.init(fileURLWithPath: currentUrl), fileType: AVFileType.mp4) else {
+        guard let writer = try? AVAssetWriter.init(outputURL: URL.init(fileURLWithPath: currentUrl), fileType: .mov) else {
             error("无法写入视频")
             return
         }
         assetWriter = writer
         
-        // 视频参数
+        let scale: CGFloat = 16.0 / 9.0
+        let videoWidth: CGFloat = 540
+        let videoHeight = min(videoWidth * scale, UIScreen.main.bounds.size.height / UIScreen.main.bounds.size.width * videoWidth)
+        
         let compressionProperties = [
             AVVideoProfileLevelKey: AVVideoProfileLevelH264MainAutoLevel,
             AVVideoAllowFrameReorderingKey: false,
             AVVideoExpectedSourceFrameRateKey: 30,
             AVVideoMaxKeyFrameIntervalKey: 30,
-            AVVideoAverageBitRateKey: 12 * width * height
+            AVVideoAverageBitRateKey: 3 * videoWidth * videoHeight
             ] as [String : Any]
         let outputSettings = [
             AVVideoCodecKey: AVVideoCodecH264,
-            AVVideoWidthKey: height * 2,
-            AVVideoHeightKey: width * 2 ,
+            AVVideoWidthKey: videoHeight,
+            AVVideoHeightKey: videoWidth,
             AVVideoScalingModeKey: AVVideoScalingModeResizeAspectFill,
             AVVideoCompressionPropertiesKey: compressionProperties
             ] as [String : Any]
@@ -184,7 +184,6 @@ class WLCameraManager: NSObject {
         if assetWriter.canAdd(assetWriterAudioInput) {
             assetWriter.add(assetWriterAudioInput)
         }
-        
     }
     
     // 创建一个新的文件路径
@@ -236,7 +235,9 @@ class WLCameraManager: NSObject {
             self.assetWriter = nil
             self.assetWriterVideoInput = nil
             self.assetWriterAudioInput = nil
-            complete(self.currentUrl)
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3, execute: {
+                complete(self.currentUrl)
+            })
         })
     }
     

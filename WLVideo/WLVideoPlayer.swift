@@ -12,41 +12,39 @@ import AVFoundation
 class WLVideoPlayer: UIView {
 
     var videoUrl: URL?
-    
-    var player: AVPlayer?
-    var playerLayer: AVPlayerLayer?
+    let player = AVPlayer()
+    var playerLayer: AVPlayerLayer!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .black
         
-        NotificationCenter.default.addObserver(self, selector: #selector(finishPlay), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
+        playerLayer = AVPlayerLayer.init(player: player)
+        playerLayer.frame = layer.bounds
+        playerLayer.videoGravity = .resizeAspect
+        layer.addSublayer(playerLayer)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(finishPlay), name: .AVPlayerItemDidPlayToEndTime, object: nil)
     }
     
     @objc func finishPlay() {
-        player?.seek(to: CMTime.zero)
-        player?.play()
+        player.seek(to: CMTime.zero)
+        player.play()
     }
     
     func play() {
-        playerLayer?.removeFromSuperlayer()
         let item = AVPlayerItem.init(asset: AVURLAsset.init(url: videoUrl!))
-        
-        player = AVPlayer.init(playerItem: item)
-        playerLayer = AVPlayerLayer.init(player: player)
-        playerLayer?.frame = layer.bounds
-        playerLayer?.videoGravity = .resizeAspect
-        layer.addSublayer(playerLayer!)
-        player?.play()
+        player.replaceCurrentItem(with: item)
+        player.play()
     }
     
     func pause() {
-        player?.pause()
+        player.pause()
         playerLayer?.removeFromSuperlayer()
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {

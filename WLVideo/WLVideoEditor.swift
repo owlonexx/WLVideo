@@ -10,6 +10,8 @@ import AVKit
 
 class WLVideoEditor: NSObject {
     
+    typealias ExportProgress = (Double) -> ()
+    
     var avAsset: AVAsset!
     
     let videoComposition = AVMutableVideoComposition()
@@ -23,6 +25,9 @@ class WLVideoEditor: NSObject {
     
     var duration: CMTime!
     var naturalSize: CGSize!
+    
+    var exportProgressBlock: ExportProgress?
+    var timer: Timer?
     
     init(videoUrl: URL) {
         super.init()
@@ -54,7 +59,7 @@ class WLVideoEditor: NSObject {
         rotatoTo(avAssetVideoTrack.preferredTransform)
     }
     
-    public func addWaterMark() {
+    public func addWaterMark(image: UIImage) {
         let videoSize = videoComposition.renderSize
         
         let videoLayer = CALayer()
@@ -66,18 +71,18 @@ class WLVideoEditor: NSObject {
         parentLayer.addSublayer(videoLayer)
         
         let imageView = UIImageView(frame: CGRect(x: 30, y: videoSize.height - 150, width: 270, height: 120))
-        imageView.image = UIImage.init(named: "bilibili")
+        imageView.image = image 
         parentLayer.addSublayer(imageView.layer)
         
         videoComposition.animationTool = .init(postProcessingAsVideoLayer: videoLayer, in: parentLayer)
     }
     
-    func addAudio() {
+    func addAudio(audioUrl: String) {
         composition.tracks(withMediaType: .audio).forEach { (track) in
             composition.removeTrack(track)
         }
         
-        let url = URL.init(fileURLWithPath: Bundle.main.path(forResource: "五环之歌", ofType: "mp3")!)
+        let url = URL.init(fileURLWithPath: audioUrl)
         let audioAsset = AVAsset.init(url: url)
         let avAssetAudioTrack = audioAsset.tracks(withMediaType: .audio).first
         
@@ -103,20 +108,35 @@ class WLVideoEditor: NSObject {
         videoComposition.instructions = [instruction]
     }
     
-    public func export(completeHandler: @escaping (String) -> ()) {
+    public func export(progress: @escaping ((Double) -> ()) ,completeHandler: @escaping (String) -> ()) {
         let savePath = createFileUrl("MOV")
+        
         let avAssetExportSession = AVAssetExportSession.init(asset: composition, presetName: AVAssetExportPresetHighestQuality)
         avAssetExportSession?.videoComposition = videoComposition
         avAssetExportSession?.outputURL = .init(fileURLWithPath: savePath)
         avAssetExportSession?.outputFileType = .mov
         avAssetExportSession?.shouldOptimizeForNetworkUse = true
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { (_) in
+            progress(Double(avAssetExportSession?.progress ?? 0))
+        })
         avAssetExportSession?.exportAsynchronously(completionHandler: {
             if avAssetExportSession?.status == .completed {
                 DispatchQueue.main.async {
+                    self.timer?.invalidate()
                     completeHandler(savePath)
                 }
             }
         })
+    }
+    
+    func assetReaderExport(completeHandler: @escaping (String) -> ()) {
+        let export = WLVideoExporter()
+        export.composition = composition
+        export.videoComposition = videoComposition
+        export.outputUrl = createFileUrl("MOV")
+        export.exportVideo { (url) in
+            completeHandler(url)
+        }
     }
     
     private func createFileUrl(_ type: String) -> String {

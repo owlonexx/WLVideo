@@ -25,14 +25,22 @@
                                     <action selector="buttonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="M6k-gh-4Qg"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="zSs-gI-eMd">
+                                <rect key="frame" x="177.5" y="273.5" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="oPW-5w-6ed" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="0Eo-VX-87P"/>
                             <constraint firstItem="oPW-5w-6ed" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8wO-dg-Wm1"/>
+                            <constraint firstItem="zSs-gI-eMd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="crw-hI-wfq"/>
+                            <constraint firstItem="oPW-5w-6ed" firstAttribute="top" secondItem="zSs-gI-eMd" secondAttribute="bottom" constant="25" id="lcL-ZH-Hi1"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="indicator" destination="zSs-gI-eMd" id="fXe-MA-Rx6"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

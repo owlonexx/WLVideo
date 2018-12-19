@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C255FE9B21C345DE0011E535 /* WLWaterMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = C255FE9A21C345DE0011E535 /* WLWaterMark.swift */; };
+		C22F019021C9DA2800DB835B /* WLVideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22F018F21C9DA2800DB835B /* WLVideoExporter.swift */; };
 		C2726A3621BFAAC900C5AD2F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2726A3521BFAAC900C5AD2F /* AppDelegate.swift */; };
 		C2726A3821BFAAC900C5AD2F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2726A3721BFAAC900C5AD2F /* ViewController.swift */; };
 		C2726A3B21BFAAC900C5AD2F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C2726A3921BFAAC900C5AD2F /* Main.storyboard */; };
@@ -21,7 +21,6 @@
 		C2726A6A21BFAB2900C5AD2F /* WLVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2726A6921BFAB2900C5AD2F /* WLVideoPlayer.swift */; };
 		C2726A6C21BFAB3500C5AD2F /* WLImageRotate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2726A6B21BFAB3500C5AD2F /* WLImageRotate.swift */; };
 		C2726A6E21BFAB4100C5AD2F /* WLDeviceOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2726A6D21BFAB4100C5AD2F /* WLDeviceOrientation.swift */; };
-		C2726A7021BFAB5200C5AD2F /* WLVideoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2726A6F21BFAB5200C5AD2F /* WLVideoConfig.swift */; };
 		C2726A7221BFAC8100C5AD2F /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2726A7121BFAC8100C5AD2F /* UIView+Extension.swift */; };
 		C2C5B6E721C8909300758EB3 /* 五环之歌.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C2C5B6E621C8909300758EB3 /* 五环之歌.mp3 */; };
 		C2C5B6ED21C893F100758EB3 /* WLVideoEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C5B6EC21C893F100758EB3 /* WLVideoEditor.swift */; };
@@ -45,7 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C255FE9A21C345DE0011E535 /* WLWaterMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLWaterMark.swift; sourceTree = "<group>"; };
+		C22F018F21C9DA2800DB835B /* WLVideoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLVideoExporter.swift; sourceTree = "<group>"; };
 		C2726A3221BFAAC900C5AD2F /* WLVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WLVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2726A3521BFAAC900C5AD2F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C2726A3721BFAAC900C5AD2F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -65,7 +64,6 @@
 		C2726A6921BFAB2900C5AD2F /* WLVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLVideoPlayer.swift; sourceTree = "<group>"; };
 		C2726A6B21BFAB3500C5AD2F /* WLImageRotate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLImageRotate.swift; sourceTree = "<group>"; };
 		C2726A6D21BFAB4100C5AD2F /* WLDeviceOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLDeviceOrientation.swift; sourceTree = "<group>"; };
-		C2726A6F21BFAB5200C5AD2F /* WLVideoConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLVideoConfig.swift; sourceTree = "<group>"; };
 		C2726A7121BFAC8100C5AD2F /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		C2C5B6E621C8909300758EB3 /* 五环之歌.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "五环之歌.mp3"; sourceTree = "<group>"; };
 		C2C5B6EC21C893F100758EB3 /* WLVideoEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLVideoEditor.swift; sourceTree = "<group>"; };
@@ -127,9 +125,8 @@
 				C2726A6921BFAB2900C5AD2F /* WLVideoPlayer.swift */,
 				C2726A6B21BFAB3500C5AD2F /* WLImageRotate.swift */,
 				C2726A6D21BFAB4100C5AD2F /* WLDeviceOrientation.swift */,
-				C2726A6F21BFAB5200C5AD2F /* WLVideoConfig.swift */,
-				C255FE9A21C345DE0011E535 /* WLWaterMark.swift */,
 				C2C5B6EC21C893F100758EB3 /* WLVideoEditor.swift */,
+				C22F018F21C9DA2800DB835B /* WLVideoExporter.swift */,
 				C2726A7121BFAC8100C5AD2F /* UIView+Extension.swift */,
 				C2C5B6E621C8909300758EB3 /* 五环之歌.mp3 */,
 				C2726A3921BFAAC900C5AD2F /* Main.storyboard */,
@@ -293,13 +290,12 @@
 				C2726A6C21BFAB3500C5AD2F /* WLImageRotate.swift in Sources */,
 				C2726A3821BFAAC900C5AD2F /* ViewController.swift in Sources */,
 				C2726A6421BFAAE100C5AD2F /* WLCameraController.swift in Sources */,
-				C2726A7021BFAB5200C5AD2F /* WLVideoConfig.swift in Sources */,
 				C2726A6E21BFAB4100C5AD2F /* WLDeviceOrientation.swift in Sources */,
 				C2726A3621BFAAC900C5AD2F /* AppDelegate.swift in Sources */,
 				C2726A6821BFAB1A00C5AD2F /* WLCameraControl.swift in Sources */,
 				C2726A6621BFAB0700C5AD2F /* WLCameraManager.swift in Sources */,
 				C2726A7221BFAC8100C5AD2F /* UIView+Extension.swift in Sources */,
-				C255FE9B21C345DE0011E535 /* WLWaterMark.swift in Sources */,
+				C22F019021C9DA2800DB835B /* WLVideoExporter.swift in Sources */,
 				C2726A6A21BFAB2900C5AD2F /* WLVideoPlayer.swift in Sources */,
 				C2C5B6ED21C893F100758EB3 /* WLVideoEditor.swift in Sources */,
 			);
@@ -479,7 +475,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NL4V5W4F62;
 				INFOPLIST_FILE = WLVideo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -498,7 +494,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NL4V5W4F62;
 				INFOPLIST_FILE = WLVideo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

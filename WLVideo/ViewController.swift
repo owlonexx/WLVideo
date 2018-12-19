@@ -10,40 +10,24 @@ import UIKit
 import Photos
 import AVFoundation
 
-let screenHeight = UIScreen.main.bounds.size.height
-let screenWidth = UIScreen.main.bounds.size.width
-
 class ViewController: UIViewController, UITableViewDelegate {
-
+    
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
+    
     @IBAction func buttonClick(_ sender: Any) {
-
-//        let videoEditer = WLVideoEditor.init(videoUrl: URL.init(fileURLWithPath: Bundle.main.path(forResource: "1", ofType: "mp4")!))
-//        videoEditer.addWaterMark()
-//        videoEditer.addAudio()
-//        videoEditer.rotatoTo(CGAffineTransform.init(a: 0, b: -1, c: 1, d: 0, tx: 0, ty: 0))
-//        let item = AVPlayerItem.init(asset: videoEditer.composition)
-//        let videoComposition = videoEditer.videoComposition
-//        videoComposition.animationTool = nil
-//        item.videoComposition = videoComposition
-//        let player = AVPlayer.init(playerItem: item)
-//        let playerLayer = AVPlayerLayer.init(player: player)
-//        playerLayer.frame = self.view.bounds
-//        playerLayer.videoGravity = .resizeAspect
-//        self.view.layer.addSublayer(playerLayer)
-//        player.play()
- 
-        
         let vc = WLCameraController()
         vc.completeBlock = { url, type in
             if type == .video {
                 let videoEditer = WLVideoEditor.init(videoUrl: URL.init(fileURLWithPath: url))
-                videoEditer.addWaterMark()
-                videoEditer.addAudio()
-                videoEditer.export(completeHandler: { (completeUrl) in
-                    let videoPlayer = WLVideoPlayer.init(frame: self.view.bounds)
-                    videoPlayer.videoUrl = URL.init(fileURLWithPath: completeUrl)
-                    self.view.addSubview(videoPlayer)
-                    videoPlayer.play()
+                videoEditer.addWaterMark(image: UIImage.init(named: "bilibili")!)
+                videoEditer.addAudio(audioUrl: Bundle.main.path(forResource: "五环之歌", ofType: "mp3")!)
+                self.indicator.startAnimating()
+                videoEditer.assetReaderExport(completeHandler: { url in
+                    self.indicator.stopAnimating()
+                    let player = WLVideoPlayer(frame: self.view.bounds)
+                    player.videoUrl = URL.init(fileURLWithPath: url)
+                    self.view.addSubview(player)
+                    player.play()
                 })
             }
         }
