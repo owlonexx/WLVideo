@@ -40,7 +40,6 @@ class WLVideoPlayer: UIView {
     
     func pause() {
         player.pause()
-        playerLayer?.removeFromSuperlayer()
     }
     
     deinit {
